@@ -39,7 +39,7 @@ class App:
     def render_body(self, *args, **kwargs):
         data = self.data.train
         st.write(f"> Train data `{data.shape[0]}` rows")
-        filter_ = st.text_input("search", "")
+        filter_ = st.text_input("search phrases", "")
         if filter_:
             data = search_df(self.data.train, filter_)
         st.write(data)
@@ -53,15 +53,15 @@ class App:
 class Helper(App):
     def visualize(self, *args, **kwargs):
 
-        # filter data for visualization
-        MAX_EDGES = 100
-        sample = self.data.train_kg[:MAX_EDGES]
-
-        st1, st2 = st.columns(2)
-
         data = self.data.train_kg
 
-        score = st1.selectbox("visualize by score", [""] + data["score"].unique().tolist())
+        # filter data for visualization
+        # -- sampling
+        MAX_EDGES = 200
+        sample = data[:MAX_EDGES]
+
+        st1, st2 = st.columns(2)
+        score = st1.selectbox("visualize phrases by similarity score", [""] + data["score"].unique().tolist())
         if score:
             sample = data[data["score"] == float(score)][:MAX_EDGES]
 
@@ -92,7 +92,8 @@ class Helper(App):
     def build_network(edge_labels, nodes):
         # src: https://stackoverflow.com/a/67279471/2839786
         from pyvis.network import Network
-        g = Network(height="800px", width="1400px", heading="U.S. Patent Phrase/Context Network", bgcolor="#bbbffz")  # notebook=True,
+        g = Network(height="800px", width="1400px", heading="U.S. Patent Phrase/Context Network",
+                    bgcolor="#bbbffz")  # notebook=True,
         for node in nodes:
             g.add_node(node)
         for e in edge_labels:
