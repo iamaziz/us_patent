@@ -22,6 +22,7 @@ class LoadData:
     # add relations / edges for knowledge graph
     train_kg: pd.DataFrame = train_df.copy()
     train_kg['relation'] = train_kg['context'] + " || " + train_kg['title'] + " || " + train_kg['score'].astype(str)
+    train_kg = train_kg.sample(frac=1).reset_index(drop=True)  # shuffle data
 
 
 class App:
