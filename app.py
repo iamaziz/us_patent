@@ -17,11 +17,11 @@ class LoadData:
 
     # add code titles to train data
     merged = train.merge(titles, left_on="context", right_on="code")
-    train_df = merged[['id', 'code', 'anchor', 'context', 'target', 'title', 'score']].copy()
+    train_df = merged[['id', 'anchor', 'context', 'target', 'title', 'score']].copy()
 
     # add relations / edges for knowledge graph
     train_kg: pd.DataFrame = train_df.copy()
-    train_kg['relation'] = train_kg['code'] + " || " + train_kg['title'] + " || " + train_kg['score'].astype(str)
+    train_kg['relation'] = train_kg['context'] + " || " + train_kg['title'] + " || " + train_kg['score'].astype(str)
 
 
 class App:
@@ -83,7 +83,8 @@ class Helper(App):
 
         # create PyVis network from the graph data
         self.pyvis_network(nodes, edge_labels)
-        st.write(f"> sample size: {sample.shape[0]}")
+        st.write(f"> the visualized sample size: {sample.shape[0]}")
+        st.write(sample)
 
     def pyvis_network(self, nodes, edge_labels):
 
