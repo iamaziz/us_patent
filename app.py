@@ -7,7 +7,7 @@ from src.utils import search_df
 APP_PAGE_HEADER()
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 class LoadData:
     train: pd.DataFrame = pd.read_csv("data/train.csv")
     train = train.sample(frac=1).reset_index(drop=True)  # shuffle data
@@ -40,7 +40,6 @@ class App:
     def render_body(*args, **kwargs):
         Helper().display_train_data()
 
-        st.header("Visualize Phrases as a Network Graph")
         Helper().visualize()
 
     def render_footer(self, *args, **kwargs):
@@ -50,18 +49,16 @@ class App:
 class Helper(App):
 
     def display_train_data(self):
-        data = self.data.train
-
-        data = self._add_code_title(data)
+        data = self.data.train_df
 
         st.write(f"> Train data `{data.shape[0]}` rows")
         filter_ = st.text_input("search phrases", "")
         if filter_:
-            data = search_df(self.data.train, filter_)
+            data = search_df(data, filter_)
         st.write(data)
 
     def visualize(self, *args, **kwargs):
-
+        st.header("Visualize Phrases as a Network Graph")
         data = self.data.train_kg
 
         # filter data for visualization
@@ -110,14 +107,6 @@ class Helper(App):
             label = edge_labels[e]
             g.add_edge(n1, n2, title=label, show_edge_weights=True)  # weight 42
         return g
-
-    @st.cache
-    def _add_code_title(self, data):
-        titles = self.data.titles
-        data = data.merge(titles, left_on="context", right_on="code", how="left")
-        cols = data.columns.tolist()[:7]
-        cols.remove("code")
-        return data[cols]
 
 
 if __name__ == "__main__":
