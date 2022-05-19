@@ -58,7 +58,7 @@ class Helper(App):
         st.write(data)
 
     def visualize(self, *args, **kwargs):
-        st.header("Visualize Phrases as a Network Graph")
+        st.subheader("Visualize Phrases as a Network Graph")
         data = self.data.train_kg
 
         # filter data for visualization
